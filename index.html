@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Etch a Sketch</title>
+</head>
+<body>
+	<div class= "title">
+		<h1 style= "font-style: sans-serif; font-weight: bold; color: white; text-shadow: 1px 1px hsl(0, 0%, 20%);">ETCH A SKETCH</h1>
+	</div> 
+</body>
+<script>
+	let scale = 16;
+	let body = document.querySelector('body');
+	body.style.background = "rgb(0, 203, 255)";
+	body.style.textAlign = "center";
+	let container;
+
+	let clearButton = document.createElement('button');
+	clearButton.textContent = "CLEAR";
+	clearButton.style.marginTop = "30px";
+	clearButton.addEventListener('click', (e) => {
+		let rectangles = document.querySelectorAll('.rect');
+		rectangles.forEach((element) => {
+			element.style.backgroundColor = 'rgb(255, 255, 255)';
+		});
+		scale = prompt("Enter the number of squares per side?", 16);
+		createGrid();
+	});
+	body.appendChild(clearButton);
+
+	function colorCodesFromRgb(rgb){
+		let resutArray = [];
+		let rValue = "", gValue = "", bValue = "";
+		for (let i = 0; i < rgb.length; i++){
+			if (rgb[i - 1] && rgb[i - 1] == '('){
+				let j = i;
+				while (rgb[j] != ','){
+					rValue += rgb[j];
+					j++;
+				}
+				i = j;
+			}
+			if (gValue == "" && rgb[i - 1] && rgb[i - 1] == ' '){
+				let j = i;
+				while (rgb[j] != ','){
+					gValue += rgb[j];
+					j++;
+				}
+				i = j;
+			}
+			if (bValue == "" && gValue != "" && rgb[i - 1] && rgb[i - 1] == ' '){
+				let j = i;
+				while (rgb[j] != ')'){
+					bValue += rgb[j];
+					j++;
+				}
+				i = j;
+			}
+		}
+		resutArray.push(Number(rValue));
+		resutArray.push(Number(gValue));
+		resutArray.push(Number(bValue));
+		return resutArray;
+	}
+
+	function createGrid(){
+		let line, rectangle;
+		if (document.querySelector('.grid')){
+			body.removeChild(container);
+		}
+		container = document.createElement('div');	
+		container.classList.toggle('grid');
+		container.style.cssText = "margin: auto; width: 500px; height: 500px;";
+		for (let j = 0; j < scale; j++){
+			line = document.createElement('div');
+			line.style.cssText = `width: 100%; height: ${100 / scale}%; display: flex; justify-content: space-between;`;
+			for (let i = 0; i < scale; i++){
+				rectangle = document.createElement('div');
+				rectangle.classList.toggle('rect');
+				rectangle.style.backgroundColor = 'rgb(255, 255, 255)';
+				rectangle.style.width = `${100 / scale}%`;
+				rectangle.style.height = "100%";
+				rectangle.addEventListener('mouseover', (e) => {
+
+					rgbArray = colorCodesFromRgb(e.target.style.backgroundColor);
+					if (rgbArray[0] != 0){
+						e.target.style.backgroundColor = `rgb(${rgbArray[0] - 15}, ${rgbArray[1] - 15}, ${rgbArray[2] - 15})`;
+					}
+				});
+				line.appendChild(rectangle);
+			}
+			container.appendChild(line);
+		}
+		body.insertBefore(container, clearButton);
+	}
+
+	createGrid();
+
+	
+</script>
+</html>
